@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
@@ -45,6 +46,10 @@ fun ProdutoScreen(
 
     var estoque by remember {
         mutableStateOf("")
+    }
+
+    var produtoEditando by remember {
+        mutableStateOf<Produto?>(null)
     }
 
     Column(
@@ -132,14 +137,31 @@ fun ProdutoScreen(
                     estoque.isNotBlank()
                 ) {
 
-                    viewModel.adicionarProduto(
-                        Produto(
-                            nome = nome,
-                            descricao = descricao,
-                            preco = preco.toDoubleOrNull() ?: 0.0,
-                            estoque = estoque.toIntOrNull() ?: 0
+                    if (produtoEditando == null) {
+
+                        viewModel.adicionarProduto(
+                            Produto(
+                                nome = nome,
+                                descricao = descricao,
+                                preco = preco.toDoubleOrNull() ?: 0.0,
+                                estoque = estoque.toIntOrNull() ?: 0
+                            )
                         )
-                    )
+
+                    } else {
+
+                        viewModel.atualizarProduto(
+                            Produto(
+                                id = produtoEditando!!.id,
+                                nome = nome,
+                                descricao = descricao,
+                                preco = preco.toDoubleOrNull() ?: 0.0,
+                                estoque = estoque.toIntOrNull() ?: 0
+                            )
+                        )
+
+                        produtoEditando = null
+                    }
 
                     nome = ""
                     descricao = ""
@@ -149,7 +171,12 @@ fun ProdutoScreen(
             }
         ) {
 
-            Text("Salvar Produto")
+            Text(
+                if (produtoEditando == null)
+                    "Salvar Produto"
+                else
+                    "Atualizar Produto"
+            )
         }
 
         Spacer(
@@ -174,10 +201,21 @@ fun ProdutoScreen(
 
                 ProdutoItem(
                     produto = produto,
+
                     onDelete = {
                         viewModel.removerProduto(
                             produto
                         )
+                    },
+
+                    onEdit = {
+
+                        produtoEditando = produto
+
+                        nome = produto.nome
+                        descricao = produto.descricao
+                        preco = produto.preco.toString()
+                        estoque = produto.estoque.toString()
                     }
                 )
             }
@@ -188,7 +226,8 @@ fun ProdutoScreen(
 @Composable
 private fun ProdutoItem(
     produto: Produto,
-    onDelete: () -> Unit
+    onDelete: () -> Unit,
+    onEdit: () -> Unit
 ) {
 
     Card(
@@ -230,8 +269,17 @@ private fun ProdutoItem(
                 Button(
                     onClick = onDelete
                 ) {
-
                     Text("Excluir")
+                }
+
+                Spacer(
+                    modifier = Modifier.width(8.dp)
+                )
+
+                Button(
+                    onClick = onEdit
+                ) {
+                    Text("Editar")
                 }
             }
         }

@@ -15,5 +15,5 @@ data class Cliente(
 
     val telefone: String,
 
-    val endereco: String
+    val cidade: String
 )

@@ -13,11 +13,8 @@ class ProdutoViewModel(
     private val repository: ProdutoRepository
 ) : ViewModel() {
 
-    private val _produtos =
-        MutableStateFlow<List<Produto>>(emptyList())
-
-    val produtos: StateFlow<List<Produto>> =
-        _produtos.asStateFlow()
+    private val _produtos = MutableStateFlow<List<Produto>>(emptyList())
+    val produtos: StateFlow<List<Produto>> = _produtos
 
     init {
         carregarProdutos()
@@ -25,31 +22,25 @@ class ProdutoViewModel(
 
     private fun carregarProdutos() {
         viewModelScope.launch {
-            repository.getAllProdutos().collect {
+            repository.getAll().collect {
                 _produtos.value = it
             }
         }
     }
 
-    fun adicionarProduto(
-        produto: Produto
-    ) {
+    fun adicionarProduto(produto: Produto) {
         viewModelScope.launch {
             repository.insert(produto)
         }
     }
 
-    fun atualizarProduto(
-        produto: Produto
-    ) {
+    fun atualizarProduto(produto: Produto) {
         viewModelScope.launch {
             repository.update(produto)
         }
     }
 
-    fun removerProduto(
-        produto: Produto
-    ) {
+    fun removerProduto(produto: Produto) {
         viewModelScope.launch {
             repository.delete(produto)
         }

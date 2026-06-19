@@ -8,25 +8,11 @@ class ClienteRepository(
     private val dao: ClienteDao
 ) {
 
-    fun getAllClientes(): Flow<List<Cliente>> {
-        return dao.getAll()
-    }
+    fun getAll(): Flow<List<Cliente>> = dao.getAll()
 
-    suspend fun insert(
-        cliente: Cliente
-    ) {
-        dao.insert(cliente)
-    }
+    suspend fun insert(cliente: Cliente) = dao.insert(cliente)
 
-    suspend fun update(
-        cliente: Cliente
-    ) {
-        dao.update(cliente)
-    }
+    suspend fun update(cliente: Cliente) = dao.update(cliente)
 
-    suspend fun delete(
-        cliente: Cliente
-    ) {
-        dao.delete(cliente)
-    }
+    suspend fun delete(cliente: Cliente) = dao.delete(cliente)
 }

@@ -4,17 +4,8 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.example.controlpedidos.ui.screens.ClienteScreen
-import com.example.controlpedidos.ui.screens.HomeScreen
-import com.example.controlpedidos.ui.screens.LoginScreen
-import com.example.controlpedidos.ui.screens.PedidoScreen
-import com.example.controlpedidos.ui.screens.ProdutoScreen
-import com.example.controlpedidos.ui.screens.SettingsScreen
-import com.example.controlpedidos.ui.viewmodel.ClienteViewModel
-import com.example.controlpedidos.ui.viewmodel.LoginViewModel
-import com.example.controlpedidos.ui.viewmodel.PedidoViewModel
-import com.example.controlpedidos.ui.viewmodel.ProdutoViewModel
-import com.example.controlpedidos.ui.viewmodel.SettingsViewModel
+import com.example.controlpedidos.ui.screens.*
+import com.example.controlpedidos.ui.viewmodel.*
 
 @Composable
 fun AppNavGraph(
@@ -32,47 +23,35 @@ fun AppNavGraph(
     ) {
 
         composable("login") {
+            LoginScreen(navController, loginViewModel)
+        }
 
-            LoginScreen(
-                navController = navController,
-                viewModel = loginViewModel
-            )
+        composable("registro") {
+            RegisterScreen(navController, loginViewModel)
         }
 
         composable("home") {
-
-            HomeScreen(
-                navController = navController
-            )
+            HomeScreen(navController)
         }
 
         composable("clientes") {
-
-            ClienteScreen(
-                viewModel = clienteViewModel
-            )
+            ClienteScreen(clienteViewModel)
         }
 
         composable("produtos") {
-
-            ProdutoScreen(
-                viewModel = produtoViewModel
-            )
+            ProdutoScreen(produtoViewModel)
         }
 
         composable("pedidos") {
-
             PedidoScreen(
-                viewModel = pedidoViewModel
+                viewModel = pedidoViewModel,
+                clienteViewModel = clienteViewModel,
+                produtoViewModel = produtoViewModel
             )
         }
 
         composable("settings") {
-
-            SettingsScreen(
-                viewModel = settingsViewModel,
-                navController = navController
-            )
+            SettingsScreen(settingsViewModel, navController)
         }
     }
 }

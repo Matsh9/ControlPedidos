@@ -20,7 +20,7 @@ import com.example.controlpedidos.data.entity.Usuario
         Pedido::class,
         Usuario::class
     ],
-    version = 1,
+    version = 2,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -45,10 +45,12 @@ abstract class AppDatabase : RoomDatabase() {
             return INSTANCE ?: synchronized(this) {
 
                 val instance = Room.databaseBuilder(
-                    context.applicationContext,
+                    context,
                     AppDatabase::class.java,
-                    "control_pedidos_db"
-                ).build()
+                    "controle_pedidos_db"
+                )
+                    .fallbackToDestructiveMigration()
+                    .build()
 
                 INSTANCE = instance
 

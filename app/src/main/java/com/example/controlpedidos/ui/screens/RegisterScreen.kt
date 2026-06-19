@@ -13,6 +13,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -22,10 +23,14 @@ import androidx.navigation.NavHostController
 import com.example.controlpedidos.ui.viewmodel.LoginViewModel
 
 @Composable
-fun LoginScreen(
+fun RegisterScreen(
     navController: NavHostController,
     viewModel: LoginViewModel
 ) {
+
+    var nome by remember {
+        mutableStateOf("")
+    }
 
     var email by remember {
         mutableStateOf("")
@@ -35,7 +40,9 @@ fun LoginScreen(
         mutableStateOf("")
     }
 
-    val errorMessage = viewModel.errorMessage.value
+    var mensagem by remember {
+        mutableStateOf("")
+    }
 
     Column(
         modifier = Modifier
@@ -48,7 +55,7 @@ fun LoginScreen(
     ) {
 
         Text(
-            text = "Controle de Pedidos",
+            text = "Criar Conta",
             style = MaterialTheme.typography.headlineMedium
         )
 
@@ -61,6 +68,21 @@ fun LoginScreen(
             Column(
                 modifier = Modifier.padding(16.dp)
             ) {
+
+                OutlinedTextField(
+                    value = nome,
+                    onValueChange = {
+                        nome = it
+                    },
+                    label = {
+                        Text("Nome")
+                    },
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                Spacer(
+                    modifier = Modifier.height(12.dp)
+                )
 
                 OutlinedTextField(
                     value = email,
@@ -90,11 +112,11 @@ fun LoginScreen(
                     modifier = Modifier.fillMaxWidth()
                 )
 
-                if (errorMessage != null) {
+                if (mensagem.isNotEmpty()) {
                     Spacer(modifier = Modifier.height(8.dp))
 
                     Text(
-                        text = errorMessage,
+                        text = mensagem,
                         color = MaterialTheme.colorScheme.error
                     )
                 }
@@ -107,15 +129,34 @@ fun LoginScreen(
                     modifier = Modifier.fillMaxWidth(),
 
                     onClick = {
-                        viewModel.login(email, senha) {
-                            navController.navigate("home") {
-                                popUpTo("login") { inclusive = true }
-                            }
+
+                        if (
+                            nome.isBlank() ||
+                            email.isBlank() ||
+                            senha.isBlank()
+                        ) {
+
+                            mensagem =
+                                "Preencha todos os campos"
+
+                            return@Button
                         }
+
+                        viewModel.registrar(
+                            nome = nome,
+                            email = email,
+                            senha = senha,
+                            onSuccess = {
+                                navController.navigate("login")
+                            },
+                            onError = { msg ->
+                                mensagem = msg
+                            }
+                        )
                     }
                 ) {
 
-                    Text("Entrar")
+                    Text("Cadastrar")
                 }
 
                 Spacer(
@@ -127,14 +168,12 @@ fun LoginScreen(
 
                     onClick = {
 
-                        navController.navigate(
-                            "registro"
-                        )
+                        navController.popBackStack()
                     }
                 ) {
 
                     Text(
-                        "Não tem uma conta? Registre-se"
+                        "Já possui conta? Entrar"
                     )
                 }
             }

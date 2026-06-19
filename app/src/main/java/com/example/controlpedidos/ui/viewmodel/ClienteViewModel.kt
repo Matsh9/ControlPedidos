@@ -2,56 +2,38 @@ package com.example.controlpedidos.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.controlpedidos.data.entity.Cliente
 import com.example.controlpedidos.data.repository.ClienteRepository
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import com.example.controlpedidos.data.entity.Cliente
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class ClienteViewModel(
-    private val repository: ClienteRepository
+    private val clienteRepository: ClienteRepository
 ) : ViewModel() {
 
-    private val _clientes =
-        MutableStateFlow<List<Cliente>>(emptyList())
+    val clientes = clienteRepository.getAll()
+        .stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(5000),
+            emptyList()
+        )
 
-    val clientes: StateFlow<List<Cliente>> =
-        _clientes.asStateFlow()
-
-    init {
-        carregarClientes()
-    }
-
-    private fun carregarClientes() {
+    fun adicionarCliente(cliente: Cliente) {
         viewModelScope.launch {
-            repository.getAllClientes().collect {
-                _clientes.value = it
-            }
+            clienteRepository.insert(cliente)
         }
     }
 
-    fun adicionarCliente(
-        cliente: Cliente
-    ) {
+    fun atualizarCliente(cliente: Cliente) {
         viewModelScope.launch {
-            repository.insert(cliente)
+            clienteRepository.update(cliente)
         }
     }
 
-    fun atualizarCliente(
-        cliente: Cliente
-    ) {
+    fun removerCliente(cliente: Cliente) {
         viewModelScope.launch {
-            repository.update(cliente)
-        }
-    }
-
-    fun removerCliente(
-        cliente: Cliente
-    ) {
-        viewModelScope.launch {
-            repository.delete(cliente)
+            clienteRepository.delete(cliente)
         }
     }
 }

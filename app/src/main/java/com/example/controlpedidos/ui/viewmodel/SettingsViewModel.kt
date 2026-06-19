@@ -2,35 +2,24 @@ package com.example.controlpedidos.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.controlpedidos.data.datastore.UserPreferences
-import com.example.controlpedidos.data.datastore.UserPreferencesRepository
-import kotlinx.coroutines.flow.Flow
+import com.example.controlpedidos.data.datastore.DataStoreManager
 import kotlinx.coroutines.launch
 
 class SettingsViewModel(
-    private val repository: UserPreferencesRepository
+    private val dataStore: DataStoreManager
 ) : ViewModel() {
 
-    val userPreferences: Flow<UserPreferences> =
-        repository.userPreferences
+    val userPreferences = dataStore.userPreferencesFlow
 
-    fun alterarTema(
-        darkTheme: Boolean
-    ) {
-
+    fun alterarTema(enabled: Boolean) {
         viewModelScope.launch {
-
-            repository.saveTheme(
-                darkTheme
-            )
+            dataStore.setDarkTheme(enabled)
         }
     }
 
     fun logout() {
-
         viewModelScope.launch {
-
-            repository.logout()
+            dataStore.logout()
         }
     }
 }

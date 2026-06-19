@@ -1,14 +1,7 @@
 package com.example.controlpedidos.ui.screens
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
-import androidx.compose.material3.Card
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -24,9 +17,7 @@ fun HomeScreen(
         modifier = Modifier
             .fillMaxSize()
             .padding(24.dp),
-
         verticalArrangement = Arrangement.Center,
-
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
@@ -35,70 +26,34 @@ fun HomeScreen(
             style = MaterialTheme.typography.headlineMedium
         )
 
-        Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 24.dp)
+        Spacer(modifier = Modifier.height(24.dp))
+
+        Button(
+            modifier = Modifier.fillMaxWidth(),
+            onClick = { navController.navigate("clientes") }
         ) {
+            Text("Clientes")
+        }
 
-            Column(
-                modifier = Modifier.padding(16.dp)
-            ) {
+        Button(
+            modifier = Modifier.fillMaxWidth(),
+            onClick = { navController.navigate("produtos") }
+        ) {
+            Text("Produtos")
+        }
 
-                Button(
-                    modifier = Modifier.fillMaxWidth(),
+        Button(
+            modifier = Modifier.fillMaxWidth(),
+            onClick = { navController.navigate("pedidos") }
+        ) {
+            Text("Pedidos")
+        }
 
-                    onClick = {
-                        navController.navigate(
-                            "clientes"
-                        )
-                    }
-                ) {
-                    Text("Clientes")
-                }
-
-                Button(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 12.dp),
-
-                    onClick = {
-                        navController.navigate(
-                            "produtos"
-                        )
-                    }
-                ) {
-                    Text("Produtos")
-                }
-
-                Button(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 12.dp),
-
-                    onClick = {
-                        navController.navigate(
-                            "pedidos"
-                        )
-                    }
-                ) {
-                    Text("Pedidos")
-                }
-
-                Button(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 12.dp),
-
-                    onClick = {
-                        navController.navigate(
-                            "settings"
-                        )
-                    }
-                ) {
-                    Text("Configurações")
-                }
-            }
+        Button(
+            modifier = Modifier.fillMaxWidth(),
+            onClick = { navController.navigate("settings") }
+        ) {
+            Text("Configurações")
         }
     }
 }

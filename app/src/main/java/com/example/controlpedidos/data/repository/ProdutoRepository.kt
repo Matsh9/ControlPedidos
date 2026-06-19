@@ -7,26 +7,9 @@ import kotlinx.coroutines.flow.Flow
 class ProdutoRepository(
     private val dao: ProdutoDao
 ) {
+    fun getAll() = dao.getAll()
 
-    fun getAllProdutos(): Flow<List<Produto>> {
-        return dao.getAll()
-    }
-
-    suspend fun insert(
-        produto: Produto
-    ) {
-        dao.insert(produto)
-    }
-
-    suspend fun update(
-        produto: Produto
-    ) {
-        dao.update(produto)
-    }
-
-    suspend fun delete(
-        produto: Produto
-    ) {
-        dao.delete(produto)
-    }
+    suspend fun insert(produto: Produto) = dao.insert(produto)
+    suspend fun update(produto: Produto) = dao.update(produto)
+    suspend fun delete(produto: Produto) = dao.delete(produto)
 }

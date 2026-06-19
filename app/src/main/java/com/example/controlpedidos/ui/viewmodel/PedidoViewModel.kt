@@ -13,11 +13,8 @@ class PedidoViewModel(
     private val repository: PedidoRepository
 ) : ViewModel() {
 
-    private val _pedidos =
-        MutableStateFlow<List<Pedido>>(emptyList())
-
-    val pedidos: StateFlow<List<Pedido>> =
-        _pedidos.asStateFlow()
+    private val _pedidos = MutableStateFlow<List<Pedido>>(emptyList())
+    val pedidos: StateFlow<List<Pedido>> = _pedidos
 
     init {
         carregarPedidos()
@@ -25,31 +22,25 @@ class PedidoViewModel(
 
     private fun carregarPedidos() {
         viewModelScope.launch {
-            repository.getAllPedidos().collect {
+            repository.getAll().collect {
                 _pedidos.value = it
             }
         }
     }
 
-    fun adicionarPedido(
-        pedido: Pedido
-    ) {
+    fun adicionarPedido(pedido: Pedido) {
         viewModelScope.launch {
             repository.insert(pedido)
         }
     }
 
-    fun atualizarPedido(
-        pedido: Pedido
-    ) {
+    fun atualizarPedido(pedido: Pedido) {
         viewModelScope.launch {
             repository.update(pedido)
         }
     }
 
-    fun removerPedido(
-        pedido: Pedido
-    ) {
+    fun removerPedido(pedido: Pedido) {
         viewModelScope.launch {
             repository.delete(pedido)
         }

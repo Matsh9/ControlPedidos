@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
@@ -43,8 +44,12 @@ fun ClienteScreen(
         mutableStateOf("")
     }
 
-    var endereco by remember {
+    var cidade by remember {
         mutableStateOf("")
+    }
+
+    var clienteEditando by remember {
+        mutableStateOf<Cliente?>(null)
     }
 
     Column(
@@ -108,12 +113,12 @@ fun ClienteScreen(
         )
 
         OutlinedTextField(
-            value = endereco,
+            value = cidade,
             onValueChange = {
-                endereco = it
+                cidade = it
             },
             label = {
-                Text("Endereço")
+                Text("Cidade")
             },
             modifier = Modifier.fillMaxWidth()
         )
@@ -131,24 +136,46 @@ fun ClienteScreen(
                     email.isNotBlank()
                 ) {
 
-                    viewModel.adicionarCliente(
-                        Cliente(
-                            nome = nome,
-                            email = email,
-                            telefone = telefone,
-                            endereco = endereco
+                    if (clienteEditando == null) {
+
+                        viewModel.adicionarCliente(
+                            Cliente(
+                                nome = nome,
+                                email = email,
+                                telefone = telefone,
+                                cidade = cidade
+                            )
                         )
-                    )
+
+                    } else {
+
+                        viewModel.atualizarCliente(
+                            Cliente(
+                                id = clienteEditando!!.id,
+                                nome = nome,
+                                email = email,
+                                telefone = telefone,
+                                cidade = cidade
+                            )
+                        )
+
+                        clienteEditando = null
+                    }
 
                     nome = ""
                     email = ""
                     telefone = ""
-                    endereco = ""
+                    cidade = ""
                 }
             }
         ) {
 
-            Text("Salvar Cliente")
+            Text(
+                if (clienteEditando == null)
+                    "Salvar Cliente"
+                else
+                    "Atualizar Cliente"
+            )
         }
 
         Spacer(
@@ -173,10 +200,19 @@ fun ClienteScreen(
 
                 ClienteItem(
                     cliente = cliente,
+
                     onDelete = {
-                        viewModel.removerCliente(
-                            cliente
-                        )
+                        viewModel.removerCliente(cliente)
+                    },
+
+                    onEdit = {
+
+                        clienteEditando = cliente
+
+                        nome = cliente.nome
+                        email = cliente.email
+                        telefone = cliente.telefone
+                        cidade = cliente.cidade
                     }
                 )
             }
@@ -187,7 +223,8 @@ fun ClienteScreen(
 @Composable
 private fun ClienteItem(
     cliente: Cliente,
-    onDelete: () -> Unit
+    onDelete: () -> Unit,
+    onEdit: () -> Unit
 ) {
 
     Card(
@@ -215,7 +252,7 @@ private fun ClienteItem(
             )
 
             Text(
-                text = cliente.endereco
+                text = cliente.cidade
             )
 
             HorizontalDivider(
@@ -229,8 +266,17 @@ private fun ClienteItem(
                 Button(
                     onClick = onDelete
                 ) {
-
                     Text("Excluir")
+                }
+
+                Spacer(
+                    modifier = Modifier.width(8.dp)
+                )
+
+                Button(
+                    onClick = onEdit
+                ) {
+                    Text("Editar")
                 }
             }
         }
