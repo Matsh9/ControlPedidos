@@ -8,7 +8,7 @@ O sistema permite o cadastro de usuários, login, controle de pedidos e visualiz
 
 ---
 
-## ⚙Funcionalidades
+## Funcionalidades
 
 - Login e registro de usuários
 - Cadastro e gerenciamento de clientes
