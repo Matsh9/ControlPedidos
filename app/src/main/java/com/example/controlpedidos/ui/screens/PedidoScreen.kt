@@ -14,6 +14,9 @@ import com.example.controlpedidos.data.entity.Produto
 import com.example.controlpedidos.ui.viewmodel.ClienteViewModel
 import com.example.controlpedidos.ui.viewmodel.PedidoViewModel
 import com.example.controlpedidos.ui.viewmodel.ProdutoViewModel
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -36,12 +39,14 @@ fun PedidoScreen(
 
     // Campos
     var quantidade by remember { mutableStateOf("") }
-    var valorTotal by remember { mutableStateOf("") }
     var data by remember { mutableStateOf("") }
     var status by remember { mutableStateOf("") }
 
     var clienteSelecionado by remember { mutableStateOf<Cliente?>(null) }
     var produtoSelecionado by remember { mutableStateOf<Produto?>(null) }
+
+    val valorTotalCalculado =
+        (quantidade.toIntOrNull() ?: 0) * (produtoSelecionado?.preco ?: 0.0)
 
     var expandirClientes by remember { mutableStateOf(false) }
     var expandirProdutos by remember { mutableStateOf(false) }
@@ -146,8 +151,9 @@ fun PedidoScreen(
         )
 
         OutlinedTextField(
-            value = valorTotal,
-            onValueChange = { valorTotal = it },
+            value = String.format("%.2f", valorTotalCalculado),
+            onValueChange = {},
+            readOnly = true,
             label = { Text("Valor Total") },
             modifier = Modifier.fillMaxWidth()
         )
@@ -176,7 +182,7 @@ fun PedidoScreen(
                             clienteId = clienteSelecionado!!.id,
                             produtoId = produtoSelecionado!!.id,
                             quantidade = quantidade.toIntOrNull() ?: 0,
-                            valorTotal = valorTotal.toDoubleOrNull() ?: 0.0,
+                            valorTotal = valorTotalCalculado,
                             data = data,
                             status = status
                         )
@@ -185,7 +191,6 @@ fun PedidoScreen(
                     clienteSelecionado = null
                     produtoSelecionado = null
                     quantidade = ""
-                    valorTotal = ""
                     data = ""
                     status = ""
                 }
@@ -231,7 +236,20 @@ fun PedidoScreen(
         DatePickerDialog(
             onDismissRequest = { showDatePicker = false },
             confirmButton = {
-                TextButton(onClick = { showDatePicker = false }) {
+                TextButton(
+                    onClick = {
+
+                        datePickerState.selectedDateMillis?.let { millis ->
+
+                            val formatter =
+                                SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+
+                            data = formatter.format(Date(millis))
+                        }
+
+                        showDatePicker = false
+                    }
+                ) {
                     Text("OK")
                 }
             }
@@ -247,7 +265,20 @@ fun PedidoScreen(
         AlertDialog(
             onDismissRequest = { showTimePicker = false },
             confirmButton = {
-                TextButton(onClick = { showTimePicker = false }) {
+                TextButton(
+                    onClick = {
+
+                        val hora =
+                            "%02d:%02d".format(
+                                timePickerState.hour,
+                                timePickerState.minute
+                            )
+
+                        data = "$data $hora"
+
+                        showTimePicker = false
+                    }
+                ) {
                     Text("OK")
                 }
             },
